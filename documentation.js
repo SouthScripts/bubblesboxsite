@@ -423,93 +423,175 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Function to deploy to Vercel by updating GitHub repository
-    async function deployToVercel(token, repo) {
-        try {
-            // Show loading message
-            const loadingMessage = document.createElement('div');
-            loadingMessage.className = 'deploy-message';
-            loadingMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying to Vercel...';
-            document.querySelector('.admin-controls').appendChild(loadingMessage);
-            
-            // Generate HTML content
-            const htmlContent = generateHTMLContent();
-            
-            // Get the current file from GitHub to get its SHA
-            const [owner, repoName] = repo.split('/');
-            const filePath = 'documentation.html';
-            
-            // First, try to get the file to see if it exists and get its SHA
-            let fileSha = '';
-            try {
-                const fileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-                    headers: {
-                        'Authorization': `token ${token}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-                
-                if (fileResponse.ok) {
-                    const fileData = await fileResponse.json();
-                    fileSha = fileData.sha;
-                }
-            } catch (error) {
-                console.error('Error getting file from GitHub:', error);
-                // If the file doesn't exist, we'll create it (no SHA needed)
+    // Update the deployToVercel function to include better error handling and validation
+
+async function deployToVercel(token, repo, generateHTMLContent) {
+    try {
+        // Show loading message
+        const loadingMessage = document.createElement('div');
+        loadingMessage.className = 'deploy-message';
+        loadingMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying to Vercel...';
+        document.querySelector('.admin-controls').appendChild(loadingMessage);
+        
+        // Validate repository format
+        if (!repo.includes('/')) {
+            throw new Error('Repository must be in the format "username/repo"');
+        }
+        
+        // Generate HTML content
+        const htmlContent = generateHTMLContent();
+        
+        // First, verify the repository exists and the token has access
+        const [owner, repoName] = repo.split('/');
+        
+        // Check if the repository exists and token has access
+        const repoCheckResponse = await fetch(`https://api.github.com/repos/${repo}`, {
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json'
             }
-            
-            // Prepare the request to update or create the file
-            const updateResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
-                method: 'PUT',
+        });
+        
+        if (!repoCheckResponse.ok) {
+            if (repoCheckResponse.status === 404) {
+                throw new Error(`Repository "${repo}" not found. Please check the repository name and ensure it exists.`);
+            } else if (repoCheckResponse.status === 401) {
+                throw new Error('Invalid GitHub token. Please check your token and ensure it has the "repo" scope.');
+            } else {
+                throw new Error(`GitHub API returned ${repoCheckResponse.status}: ${await repoCheckResponse.text()}`);
+            }
+        }
+        
+        const repoData = await repoCheckResponse.json();
+        console.log('Repository found:', repoData.full_name);
+        
+        // Get the default branch
+        const defaultBranch = repoData.default_branch || 'main';
+        console.log('Default branch:', defaultBranch);
+        
+        const filePath = 'documentation.html';
+        
+        // First, try to get the file to see if it exists and get its SHA
+        let fileSha = '';
+        try {
+            const fileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}?ref=${defaultBranch}`, {
                 headers: {
                     'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message: 'Update documentation.html via admin panel',
-                    content: btoa(unescape(encodeURIComponent(htmlContent))), // Base64 encode the content
-                    sha: fileSha || undefined // Include SHA if updating, omit if creating
-                })
+                    'Accept': 'application/vnd.github.v3+json'
+                }
             });
             
-            if (updateResponse.ok) {
-                // Remove loading message
-                loadingMessage.remove();
-                
-                // Show success message
-                const successMessage = document.createElement('div');
-                successMessage.className = 'deploy-message success';
-                successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Documentation deployed successfully! Vercel will automatically update your site.';
-                document.querySelector('.admin-controls').appendChild(successMessage);
-                
-                // Remove success message after 5 seconds
-                setTimeout(() => {
-                    successMessage.remove();
-                }, 5000);
+            if (fileResponse.ok) {
+                const fileData = await fileResponse.json();
+                fileSha = fileData.sha;
+                console.log('File exists, got SHA:', fileSha);
+            } else if (fileResponse.status === 404) {
+                console.log('File does not exist yet, will create it');
             } else {
-                throw new Error(`GitHub API returned ${updateResponse.status}: ${await updateResponse.text()}`);
+                console.warn('Unexpected response when checking file:', fileResponse.status);
             }
         } catch (error) {
-            console.error('Error deploying to Vercel:', error);
-            
-            // Remove loading message if it exists
-            const loadingMessage = document.querySelector('.deploy-message');
-            if (loadingMessage) {
-                loadingMessage.remove();
-            }
-            
-            // Show error message
-            const errorMessage = document.createElement('div');
-            errorMessage.className = 'deploy-message error';
-            errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error deploying to Vercel: ${error.message}`;
-            document.querySelector('.admin-controls').appendChild(errorMessage);
-            
-            // Remove error message after 5 seconds
-            setTimeout(() => {
-                errorMessage.remove();
-            }, 5000);
+            console.error('Error checking if file exists:', error);
         }
+        
+        // Prepare the request to update or create the file
+        console.log('Preparing to update file...');
+        const updateResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `token ${token}`,
+                'Accept': 'application/vnd.github.v3+json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                message: 'Update documentation.html via admin panel',
+                content: btoa(unescape(encodeURIComponent(htmlContent))), // Base64 encode the content
+                branch: defaultBranch,
+                sha: fileSha || undefined // Include SHA if updating, omit if creating
+            })
+        });
+        
+        if (updateResponse.ok) {
+            const updateData = await updateResponse.json();
+            console.log('File updated successfully:', updateData);
+            
+            // Remove loading message
+            loadingMessage.remove();
+            
+            // Show success message
+            const successMessage = document.createElement('div');
+            successMessage.className = 'deploy-message success';
+            successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Documentation deployed successfully! Vercel will automatically update your site.';
+            document.querySelector('.admin-controls').appendChild(successMessage);
+            
+            // Remove success message after 5 seconds
+            setTimeout(() => {
+                successMessage.remove();
+            }, 5000);
+        } else {
+            const errorText = await updateResponse.text();
+            console.error('Error response:', errorText);
+            throw new Error(`GitHub API returned ${updateResponse.status}: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error deploying to Vercel:', error);
+        
+        // Remove loading message if it exists
+        const loadingMessage = document.querySelector('.deploy-message');
+        if (loadingMessage) {
+            loadingMessage.remove();
+        }
+        
+        // Show error message with more helpful information
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'deploy-message error';
+        
+        let errorText = error.message;
+        
+        // Add troubleshooting tips based on the error
+        if (error.message.includes('404')) {
+            errorText += `
+                <div class="troubleshooting-tips">
+                    <p><strong>Troubleshooting tips:</strong></p>
+                    <ul>
+                        <li>Check that the repository name is correct (format: username/repo)</li>
+                        <li>Ensure the repository exists and is not private, or your token has access to it</li>
+                        <li>Verify your GitHub token has the "repo" scope</li>
+                    </ul>
+                </div>
+            `;
+        } else if (error.message.includes('401')) {
+            errorText += `
+                <div class="troubleshooting-tips">
+                    <p><strong>Troubleshooting tips:</strong></p>
+                    <ul>
+                        <li>Your GitHub token may be invalid or expired</li>
+                        <li>Create a new token with the "repo" scope</li>
+                    </ul>
+                </div>
+            `;
+        }
+        
+        errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${errorText}`;
+        document.querySelector('.admin-controls').appendChild(errorMessage);
+        
+        // Add a "Try Again" button
+        const tryAgainButton = document.createElement('button');
+        tryAgainButton.className = 'btn btn-outline btn-block';
+        tryAgainButton.innerHTML = '<i class="fas fa-redo"></i> Update GitHub Settings';
+        tryAgainButton.style.marginTop = '1rem';
+        tryAgainButton.addEventListener('click', function() {
+            // Remove error message
+            errorMessage.remove();
+            tryAgainButton.remove();
+            
+            // Show GitHub settings form
+            document.getElementById('github-settings').style.display = 'block';
+        });
+        
+        document.querySelector('.admin-controls').appendChild(tryAgainButton);
     }
+}
     
     // Function to generate HTML content
     function generateHTMLContent() {
