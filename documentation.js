@@ -217,12 +217,42 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load documentation from global storage
     function loadDocumentation() {
         const savedDocs = localStorage.getItem(GLOBAL_DOC_KEY);
-        return savedDocs ? JSON.parse(savedDocs) : defaultDocSections;
+        if (savedDocs) {
+            try {
+                const parsedData = JSON.parse(savedDocs);
+                // Check if it's the new format with sections and lastUpdated
+                if (parsedData.sections) {
+                    return parsedData;
+                } else {
+                    // Old format, convert to new format
+                    return {
+                        sections: parsedData,
+                        lastUpdated: new Date().toISOString()
+                    };
+                }
+            } catch (e) {
+                console.error('Error parsing stored documentation:', e);
+                return {
+                    sections: defaultDocSections,
+                    lastUpdated: new Date().toISOString()
+                };
+            }
+        } else {
+            return {
+                sections: defaultDocSections,
+                lastUpdated: new Date().toISOString()
+            };
+        }
     }
     
     // Save documentation to global storage
     function saveDocumentation(sections) {
-        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(sections));
+        // Add a timestamp to track when the documentation was last updated
+        const docData = {
+            sections: sections,
+            lastUpdated: new Date().toISOString()
+        };
+        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(docData));
     }
     
     // Initialize documentation if it doesn't exist
@@ -232,8 +262,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Load documentation sections
-    const docSections = loadDocumentation();
+    const docData = loadDocumentation();
+    const docSections = docData.sections;
+    const lastUpdated = docData.lastUpdated;
+    
     console.log('Loaded documentation sections:', docSections.length);
+    console.log('Last updated:', new Date(lastUpdated).toLocaleString());
     
     // Generate sidebar navigation
     const docNav = document.querySelector('.doc-nav');
@@ -256,7 +290,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Only show edit controls for admin
             const isAdminUser = isAdmin();
-            console.log('Is admin for section controls:', isAdminUser);
             
             const editControls = isAdminUser ? `
                 <div class="edit-controls">
@@ -281,7 +314,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const adminControls = document.querySelector('.admin-controls');
     if (adminControls) {
         const isAdminUser = isAdmin();
-        console.log('Is admin for admin controls:', isAdminUser);
         
         if (isAdminUser) {
             adminControls.style.display = 'block';
@@ -295,6 +327,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="admin-bar-content">
                             <div class="admin-bar-user">
                                 <i class="fas fa-user-shield"></i> Logged in as Admin
+                            </div>
+                            <div class="admin-bar-info">
+                                Last updated: <span id="last-updated-time">${new Date(lastUpdated).toLocaleString()}</span>
                             </div>
                             <div class="admin-bar-actions">
                                 <button id="logout-btn" class="btn btn-outline">Logout</button>
@@ -339,6 +374,101 @@ document.addEventListener('DOMContentLoaded', function() {
             
             modal.style.display = 'block';
         });
+    }
+    
+    // Export documentation button (admin only)
+    const exportDocsBtn = document.getElementById('export-docs-btn');
+    if (exportDocsBtn && isAdmin()) {
+        exportDocsBtn.addEventListener('click', function() {
+            exportDocumentation();
+        });
+    }
+    
+    // Import documentation button (admin only)
+    const importDocsBtn = document.getElementById('import-docs-btn');
+    if (importDocsBtn && isAdmin()) {
+        importDocsBtn.addEventListener('click', function() {
+            // Create a file input element
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+            
+            // Trigger the file selection dialog
+            fileInput.click();
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function() {
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        try {
+                            const importedData = JSON.parse(e.target.result);
+                            
+                            // Validate the imported data
+                            if (importedData.sections && Array.isArray(importedData.sections) && importedData.lastUpdated) {
+                                // Compare timestamps
+                                const currentData = loadDocumentation();
+                                const currentDate = new Date(currentData.lastUpdated);
+                                const importedDate = new Date(importedData.lastUpdated);
+                                
+                                if (importedDate > currentDate) {
+                                    // The imported data is newer
+                                    if (confirm(`The imported documentation is newer (${importedDate.toLocaleString()}) than your current documentation (${currentDate.toLocaleString()}). Do you want to replace your current documentation?`)) {
+                                        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(importedData));
+                                        alert('Documentation imported successfully! The page will now reload.');
+                                        window.location.reload();
+                                    }
+                                } else {
+                                    // The current data is newer or the same age
+                                    if (confirm(`Your current documentation (${currentDate.toLocaleString()}) is newer than the imported documentation (${importedDate.toLocaleString()}). Do you still want to replace your current documentation?`)) {
+                                        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(importedData));
+                                        alert('Documentation imported successfully! The page will now reload.');
+                                        window.location.reload();
+                                    }
+                                }
+                            } else {
+                                alert('The imported file does not contain valid documentation data.');
+                            }
+                        } catch (error) {
+                            console.error('Error importing documentation:', error);
+                            alert('Error importing documentation. Please make sure the file is a valid JSON export.');
+                        }
+                    };
+                    
+                    reader.readAsText(file);
+                }
+                
+                // Clean up
+                document.body.removeChild(fileInput);
+            });
+        });
+    }
+    
+    // Function to export documentation
+    function exportDocumentation() {
+        const docData = loadDocumentation();
+        
+        // Create a Blob with the documentation data
+        const blob = new Blob([JSON.stringify(docData, null, 2)], { type: 'application/json' });
+        
+        // Create a download link
+        const downloadLink = document.createElement('a');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = `bubbles_box_documentation_${new Date().toISOString().split('T')[0]}.json`;
+        
+        // Trigger the download
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        
+        // Clean up
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(downloadLink.href);
+        
+        alert('Documentation exported successfully! You can import this file on another device to sync your documentation.');
     }
     
     // Edit section buttons (admin only)

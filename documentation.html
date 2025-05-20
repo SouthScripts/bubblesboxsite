@@ -34,6 +34,8 @@
         </nav>
     </header>
 
+    <!-- Admin Bar will be inserted here by JavaScript if user is admin -->
+
     <section class="documentation-hero">
         <div class="container">
             <h1>Server Documentation</h1>
@@ -54,6 +56,12 @@
                     <div class="admin-controls" style="display: none;">
                         <button id="add-section-btn" class="btn btn-primary btn-block">
                             <i class="fas fa-plus"></i> Add Section
+                        </button>
+                        <button id="export-docs-btn" class="btn btn-secondary btn-block">
+                            <i class="fas fa-download"></i> Export Documentation
+                        </button>
+                        <button id="import-docs-btn" class="btn btn-secondary btn-block">
+                            <i class="fas fa-upload"></i> Import Documentation
                         </button>
                         <a href="admin-login.html" class="btn btn-outline btn-block">
                             <i class="fas fa-user-shield"></i> Admin Login

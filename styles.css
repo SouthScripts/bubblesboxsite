@@ -1062,6 +1062,58 @@ img {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.admin-bar-info {
+    color: var(--secondary);
+    font-size: 0.9rem;
+}
+
+/* Import/Export Buttons */
+#export-docs-btn, #import-docs-btn {
+    margin-top: 0.5rem;
+}
+
+/* File Input Styling */
+input[type="file"] {
+    display: none;
+}
+
+/* Last Updated Time */
+#last-updated-time {
+    font-weight: 600;
+}
+
+/* Sync Instructions Modal */
+.sync-instructions {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: rgba(76, 201, 240, 0.1);
+    border-radius: var(--border-radius);
+    border-left: 3px solid var(--secondary);
+}
+
+.sync-instructions h3 {
+    margin-bottom: 0.75rem;
+    color: var(--secondary);
+}
+
+.sync-instructions ol {
+    padding-left: 1.5rem;
+}
+
+.sync-instructions li {
+    margin-bottom: 0.5rem;
+}
+
+.sync-instructions code {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.9rem;
 }
 
 .admin-bar-user {
