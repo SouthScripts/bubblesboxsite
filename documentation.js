@@ -1,452 +1,465 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Variables
-    const docNav = document.getElementById('doc-nav');
-    const docContent = document.getElementById('doc-content');
-    const adminControls = document.getElementById('admin-controls');
-    const toggleEditModeBtn = document.getElementById('toggle-edit-mode');
-    const addSectionBtn = document.getElementById('add-section');
-    const editModal = document.getElementById('edit-modal');
-    const closeModal = document.querySelector('.close-modal');
-    const cancelEdit = document.getElementById('cancel-edit');
-    const editForm = document.getElementById('edit-form');
-    const modalTitle = document.getElementById('modal-title');
-    const sectionTitleInput = document.getElementById('section-title');
-    const sectionContentInput = document.getElementById('section-content');
+    // Check if we're on the documentation page
+    const docMain = document.querySelector('.doc-main');
+    if (!docMain) return;
     
-    let editMode = false;
-    let currentSection = null;
+    // Default documentation sections
+    const defaultDocSections = [
+        {
+            id: 'server-info',
+            title: 'Server Information',
+            content: `
+                <h3>About Bubbles Box</h3>
+                <p>Bubbles Box is a premium Minecraft Box PvP server offering a unique and competitive gameplay experience. Our server features custom maps, balanced kits, and regular events to keep the gameplay fresh and exciting.</p>
+                
+                <h3>Server Specifications</h3>
+                <p>Our server runs on high-performance hardware to ensure a lag-free experience:</p>
+                <ul>
+                    <li>Intel Xeon E5-2690 v4 (14 cores, 28 threads)</li>
+                    <li>64GB DDR4 RAM</li>
+                    <li>NVMe SSD Storage</li>
+                    <li>DDoS Protection</li>
+                    <li>99.9% Uptime Guarantee</li>
+                </ul>
+                
+                <h3>Server Address</h3>
+                <p>You can connect to our server using the following address: <code>play.bubblesbox.net</code></p>
+            `
+        },
+        {
+            id: 'gameplay',
+            title: 'Gameplay Guide',
+            content: `
+                <h3>Box PvP Basics</h3>
+                <p>Box PvP is a fast-paced combat style in Minecraft where players fight in enclosed arenas with custom kits. Here's how to get started:</p>
+                <ol>
+                    <li>Join the server at <code>play.bubblesbox.net</code></li>
+                    <li>Use the <code>/kit</code> command to select your preferred kit</li>
+                    <li>Join a match using the NPC in the spawn area or with <code>/play</code></li>
+                    <li>Fight to be the last player standing!</li>
+                </ol>
+                
+                <h3>Available Kits</h3>
+                <p>Bubbles Box offers a variety of balanced kits to suit different playstyles:</p>
+                <ul>
+                    <li><strong>Warrior</strong> - Balanced kit with sword and bow</li>
+                    <li><strong>Archer</strong> - Ranged specialist with powerful bow</li>
+                    <li><strong>Tank</strong> - High defense but slower movement</li>
+                    <li><strong>Assassin</strong> - Fast movement with damage-over-time effects</li>
+                    <li><strong>Mage</strong> - Special abilities and potion effects</li>
+                </ul>
+                
+                <h3>Game Modes</h3>
+                <p>We offer several game modes to keep things interesting:</p>
+                <ul>
+                    <li><strong>Solo</strong> - Every player for themselves</li>
+                    <li><strong>Duos</strong> - Team up with one friend</li>
+                    <li><strong>Squads</strong> - Teams of four compete for victory</li>
+                    <li><strong>Capture the Flag</strong> - Team-based objective mode</li>
+                    <li><strong>King of the Hill</strong> - Control the center to earn points</li>
+                </ul>
+            `
+        },
+        {
+            id: 'ranks',
+            title: 'Ranks & Perks',
+            content: `
+                <h3>Rank System</h3>
+                <p>Bubbles Box features both earnable and purchasable ranks, each with its own set of perks and benefits.</p>
+                
+                <div class="rank-table">
+                    <table>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Type</th>
+                            <th>Cost/Requirement</th>
+                            <th>Key Perks</th>
+                        </tr>
+                        <tr>
+                            <td>Player</td>
+                            <td>Default</td>
+                            <td>Free</td>
+                            <td>Basic access to all game modes</td>
+                        </tr>
+                        <tr>
+                            <td>Veteran</td>
+                            <td>Earnable</td>
+                            <td>50 hours playtime</td>
+                            <td>Custom nickname, 5 kit presets</td>
+                        </tr>
+                        <tr>
+                            <td>Champion</td>
+                            <td>Earnable</td>
+                            <td>250 wins</td>
+                            <td>Special title, custom kill messages</td>
+                        </tr>
+                        <tr>
+                            <td>VIP</td>
+                            <td>Purchasable</td>
+                            <td>$9.99</td>
+                            <td>Priority queue, 10% XP boost</td>
+                        </tr>
+                        <tr>
+                            <td>MVP</td>
+                            <td>Purchasable</td>
+                            <td>$19.99</td>
+                            <td>All VIP perks, custom armor colors</td>
+                        </tr>
+                        <tr>
+                            <td>MVP+</td>
+                            <td>Purchasable</td>
+                            <td>$29.99</td>
+                            <td>All MVP perks, private matches, 25% XP boost</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <h3>Seasonal Rewards</h3>
+                <p>Each season (lasting 3 months), players can earn exclusive rewards based on their performance:</p>
+                <ul>
+                    <li><strong>Bronze Tier</strong> - Custom title for the season</li>
+                    <li><strong>Silver Tier</strong> - Bronze rewards + exclusive kit</li>
+                    <li><strong>Gold Tier</strong> - Silver rewards + special effects</li>
+                    <li><strong>Diamond Tier</strong> - Gold rewards + unique cosmetics</li>
+                    <li><strong>Champion Tier</strong> - All rewards + permanent recognition on the server</li>
+                </ul>
+            `
+        },
+        {
+            id: 'rules',
+            title: 'Server Rules',
+            content: `
+                <h3>General Rules</h3>
+                <p>To ensure a positive experience for all players, please follow these rules:</p>
+                <ol>
+                    <li>Be respectful to all players and staff</li>
+                    <li>No harassment, hate speech, or excessive profanity</li>
+                    <li>No spamming or flooding chat</li>
+                    <li>No advertising other servers or services</li>
+                    <li>No exploiting bugs or glitches</li>
+                    <li>No hacking, cheating, or using unauthorized mods</li>
+                    <li>No ban evasion</li>
+                    <li>Follow staff instructions</li>
+                </ol>
+                
+                <h3>Chat Rules</h3>
+                <p>Our chat is moderated to maintain a friendly environment:</p>
+                <ul>
+                    <li>Keep chat family-friendly</li>
+                    <li>No excessive caps</li>
+                    <li>No sharing personal information</li>
+                    <li>English only in main chat (other languages allowed in team chat)</li>
+                    <li>Use appropriate channels for different topics</li>
+                </ul>
+                
+                <h3>Punishment System</h3>
+                <p>Violations of the rules may result in the following consequences:</p>
+                <ul>
+                    <li><strong>Warning</strong> - For minor first-time offenses</li>
+                    <li><strong>Mute</strong> - For chat violations (duration varies)</li>
+                    <li><strong>Temporary Ban</strong> - For gameplay violations or repeated offenses</li>
+                    <li><strong>Permanent Ban</strong> - For severe violations or hacking</li>
+                </ul>
+                <p>Appeals can be submitted on our Discord server.</p>
+            `
+        },
+        {
+            id: 'faq',
+            title: 'Frequently Asked Questions',
+            content: `
+                <div class="faq-item">
+                    <h4>How do I join the server?</h4>
+                    <p>To join Bubbles Box, open Minecraft Java Edition, go to Multiplayer, click "Add Server", and enter <code>play.bubblesbox.net</code> as the server address.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>What Minecraft versions are supported?</h4>
+                    <p>Bubbles Box supports Minecraft Java Edition versions 1.8.9 to 1.20.1. For the best experience, we recommend using version 1.16.5 or newer.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How do I report a player?</h4>
+                    <p>You can report a player using the <code>/report [player] [reason]</code> command in-game, or by contacting a staff member on our Discord server.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How do I claim seasonal rewards?</h4>
+                    <p>Seasonal rewards are automatically added to your account at the end of each season. You can view and activate them using the <code>/rewards</code> command.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>Is there a way to practice without affecting my stats?</h4>
+                    <p>Yes! You can use the <code>/practice</code> command to enter our practice arenas, where you can train without affecting your competitive statistics.</p>
+                </div>
+                
+                <div class="faq-item">
+                    <h4>How do I join a clan?</h4>
+                    <p>You can create a clan with <code>/clan create [name]</code> or join an existing clan by receiving and accepting an invitation with <code>/clan accept [clan]</code>.</p>
+                </div>
+            `
+        }
+    ];
     
-    // Check if user is authenticated
-    function isAuthenticated() {
-        const session = localStorage.getItem('bubblesBoxSession');
-        
-        if (!session) {
-            return false;
-        }
-        
-        const sessionData = JSON.parse(session);
-        const now = new Date().getTime();
-        
-        // Check if session is expired
-        if (now > sessionData.expiresAt) {
-            // Session expired, remove it
-            localStorage.removeItem('bubblesBoxSession');
-            return false;
-        }
-        
-        return true;
+    // Check if user is admin
+    function isAdmin() {
+        return localStorage.getItem('adminLoggedIn') === 'true';
     }
     
-    // Show/hide admin controls based on authentication
-    function updateAdminUI() {
-        if (adminControls) {
-            if (isAuthenticated()) {
-                adminControls.style.display = 'block';
-                
-                // Update the edit mode button text
-                if (toggleEditModeBtn) {
-                    toggleEditModeBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Mode';
-                    
-                    // Remove any existing event listeners
-                    toggleEditModeBtn.replaceWith(toggleEditModeBtn.cloneNode(true));
-                    
-                    // Get the new button reference
-                    const newToggleBtn = document.getElementById('toggle-edit-mode');
-                    
-                    // Add event listener
-                    newToggleBtn.addEventListener('click', toggleEditMode);
-                }
-            } else {
-                adminControls.style.display = 'none';
-                
-                // If in edit mode, exit it
-                if (editMode) {
-                    toggleEditMode();
-                }
-                
-                // Update the edit mode button text to show login instead
-                if (toggleEditModeBtn) {
-                    toggleEditModeBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Admin Login';
-                    
-                    // Remove any existing event listeners
-                    toggleEditModeBtn.replaceWith(toggleEditModeBtn.cloneNode(true));
-                    
-                    // Get the new button reference
-                    const newToggleBtn = document.getElementById('toggle-edit-mode');
-                    
-                    // Add event listener
-                    newToggleBtn.addEventListener('click', function() {
-                        window.location.href = 'admin-login.html';
-                    });
-                }
-            }
-        }
+    // Global documentation storage key
+    const GLOBAL_DOC_KEY = 'bubbles_box_global_documentation';
+    
+    // Load documentation from global storage
+    function loadDocumentation() {
+        const savedDocs = localStorage.getItem(GLOBAL_DOC_KEY);
+        return savedDocs ? JSON.parse(savedDocs) : defaultDocSections;
     }
     
-    // Initialize documentation from localStorage or use default content
-    function initDocumentation() {
-        // Check if we have saved documentation in localStorage
-        const savedDocs = localStorage.getItem('bubblesBoxDocs');
-        
-        if (savedDocs) {
-            // Load saved documentation
-            const docs = JSON.parse(savedDocs);
-            updateNavigation(docs);
-            renderDocSections(docs);
-        } else {
-            // Use default content (already in HTML)
-            const defaultDocs = [];
-            document.querySelectorAll('.doc-section').forEach(section => {
-                const id = section.id;
-                const title = section.querySelector('h2').textContent;
-                const content = section.querySelector('.section-content').innerHTML;
-                
-                defaultDocs.push({
-                    id,
-                    title,
-                    content
-                });
-            });
-            
-            // Save default docs to localStorage
-            localStorage.setItem('bubblesBoxDocs', JSON.stringify(defaultDocs));
-        }
-        
-        // Set up navigation click handlers
-        setupNavigation();
-        
-        // Update admin UI based on authentication
-        updateAdminUI();
+    // Save documentation to global storage
+    function saveDocumentation(sections) {
+        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(sections));
     }
     
-    // Update navigation based on documentation sections
-    function updateNavigation(docs) {
-        if (!docNav) return;
-        
+    // Initialize documentation if it doesn't exist
+    if (!localStorage.getItem(GLOBAL_DOC_KEY)) {
+        saveDocumentation(defaultDocSections);
+    }
+    
+    // Load documentation sections
+    const docSections = loadDocumentation();
+    
+    // Generate sidebar navigation
+    const docNav = document.querySelector('.doc-nav');
+    if (docNav) {
         docNav.innerHTML = '';
-        
-        docs.forEach(section => {
+        docSections.forEach(section => {
             const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `#${section.id}`;
-            a.textContent = section.title;
-            li.appendChild(a);
+            li.innerHTML = `<a href="#${section.id}" data-section="${section.id}">${section.title}</a>`;
             docNav.appendChild(li);
         });
     }
     
-    // Render documentation sections
-    function renderDocSections(docs) {
-        if (!docContent) return;
-        
-        docContent.innerHTML = '';
-        
-        docs.forEach(section => {
-            const sectionEl = document.createElement('div');
-            sectionEl.className = 'doc-section';
-            sectionEl.id = section.id;
+    // Generate documentation content
+    if (docMain) {
+        docMain.innerHTML = '';
+        docSections.forEach(section => {
+            const sectionElement = document.createElement('div');
+            sectionElement.id = section.id;
+            sectionElement.className = 'doc-section';
             
-            sectionEl.innerHTML = `
+            // Only show edit controls for admin
+            const editControls = isAdmin() ? `
+                <div class="edit-controls">
+                    <button class="edit-btn" data-section="${section.id}"><i class="fas fa-edit"></i></button>
+                    <button class="delete-btn" data-section="${section.id}"><i class="fas fa-trash"></i></button>
+                </div>
+            ` : '';
+            
+            sectionElement.innerHTML = `
                 <div class="section-header">
                     <h2>${section.title}</h2>
-                    <div class="edit-controls" style="display: ${editMode ? 'flex' : 'none'};">
-                        <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn"><i class="fas fa-trash"></i></button>
-                    </div>
+                    ${editControls}
                 </div>
-                <div class="section-content">
-                    ${section.content}
-                </div>
+                <div class="section-content">${section.content}</div>
             `;
             
-            docContent.appendChild(sectionEl);
+            docMain.appendChild(sectionElement);
         });
-        
-        // If in edit mode, setup edit buttons
-        if (editMode) {
-            setupEditButtons();
+    }
+    
+    // Show/hide admin controls based on login status
+    const adminControls = document.querySelector('.admin-controls');
+    if (adminControls) {
+        if (isAdmin()) {
+            adminControls.style.display = 'block';
+            
+            // Add admin bar if not already present
+            if (!document.querySelector('.admin-bar')) {
+                const adminBar = document.createElement('div');
+                adminBar.className = 'admin-bar';
+                adminBar.innerHTML = `
+                    <div class="container">
+                        <div class="admin-bar-content">
+                            <div class="admin-bar-user">
+                                <i class="fas fa-user-shield"></i> Logged in as Admin
+                            </div>
+                            <div class="admin-bar-actions">
+                                <button id="logout-btn" class="btn btn-outline">Logout</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.insertBefore(adminBar, document.body.firstChild);
+                
+                // Add logout functionality
+                document.getElementById('logout-btn').addEventListener('click', function() {
+                    localStorage.removeItem('adminLoggedIn');
+                    window.location.reload();
+                });
+            }
+        } else {
+            adminControls.style.display = 'none';
+            
+            // Remove admin bar if present
+            const adminBar = document.querySelector('.admin-bar');
+            if (adminBar) {
+                adminBar.remove();
+            }
         }
     }
     
-    // Set up navigation click handlers
-    function setupNavigation() {
-        document.querySelectorAll('#doc-nav a').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
+    // Add section button (admin only)
+    const addSectionBtn = document.getElementById('add-section-btn');
+    if (addSectionBtn && isAdmin()) {
+        addSectionBtn.addEventListener('click', function() {
+            const modal = document.getElementById('doc-modal');
+            const modalTitle = document.getElementById('modal-title');
+            const sectionForm = document.getElementById('section-form');
+            
+            modalTitle.textContent = 'Add New Section';
+            sectionForm.dataset.action = 'add';
+            sectionForm.dataset.sectionId = '';
+            
+            document.getElementById('section-title').value = '';
+            document.getElementById('section-content').value = '';
+            
+            modal.style.display = 'block';
+        });
+    }
+    
+    // Edit section buttons (admin only)
+    const editBtns = document.querySelectorAll('.edit-btn');
+    if (editBtns.length > 0 && isAdmin()) {
+        editBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sectionId = this.dataset.section;
+                const section = docSections.find(s => s.id === sectionId);
                 
-                // Remove active class from all links
-                document.querySelectorAll('#doc-nav a').forEach(a => a.classList.remove('active'));
-                
-                // Add active class to clicked link
-                this.classList.add('active');
-                
-                // Scroll to section
-                const targetId = this.getAttribute('href');
-                const targetElement = document.querySelector(targetId);
-                
-                if (targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 100,
-                        behavior: 'smooth'
-                    });
+                if (section) {
+                    const modal = document.getElementById('doc-modal');
+                    const modalTitle = document.getElementById('modal-title');
+                    const sectionForm = document.getElementById('section-form');
+                    
+                    modalTitle.textContent = 'Edit Section';
+                    sectionForm.dataset.action = 'edit';
+                    sectionForm.dataset.sectionId = sectionId;
+                    
+                    document.getElementById('section-title').value = section.title;
+                    document.getElementById('section-content').value = section.content;
+                    
+                    modal.style.display = 'block';
                 }
             });
         });
     }
     
-    // Toggle edit mode
-    function toggleEditMode() {
-        // Check if user is authenticated
-        if (!isAuthenticated() && !editMode) {
-            window.location.href = 'admin-login.html';
-            return;
-        }
-        
-        editMode = !editMode;
-        
-        if (editMode) {
-            toggleEditModeBtn.innerHTML = '<i class="fas fa-times"></i> Exit Edit Mode';
-            toggleEditModeBtn.classList.remove('btn-primary');
-            toggleEditModeBtn.classList.add('btn-danger');
-            
-            if (addSectionBtn) {
-                addSectionBtn.style.display = 'block';
-            }
-            
-            // Show edit controls
-            document.querySelectorAll('.edit-controls').forEach(control => {
-                control.style.display = 'flex';
-            });
-            
-            // Add event listeners to edit and delete buttons
-            setupEditButtons();
-        } else {
-            toggleEditModeBtn.innerHTML = '<i class="fas fa-edit"></i> Edit Mode';
-            toggleEditModeBtn.classList.remove('btn-danger');
-            toggleEditModeBtn.classList.add('btn-primary');
-            
-            if (addSectionBtn) {
-                addSectionBtn.style.display = 'none';
-            }
-            
-            // Hide edit controls
-            document.querySelectorAll('.edit-controls').forEach(control => {
-                control.style.display = 'none';
-            });
-        }
-    }
-    
-    // Setup edit and delete buttons
-    function setupEditButtons() {
-        // Edit buttons
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            // Remove existing event listeners by cloning and replacing
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            
-            newBtn.addEventListener('click', function() {
-                const section = this.closest('.doc-section');
-                const sectionId = section.id;
-                const sectionTitle = section.querySelector('h2').textContent;
-                const sectionContent = section.querySelector('.section-content').innerHTML;
+    // Delete section buttons (admin only)
+    const deleteBtns = document.querySelectorAll('.delete-btn');
+    if (deleteBtns.length > 0 && isAdmin()) {
+        deleteBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const sectionId = this.dataset.section;
                 
-                // Set current section
-                currentSection = sectionId;
-                
-                // Fill modal with section data
-                modalTitle.textContent = 'Edit Section';
-                sectionTitleInput.value = sectionTitle;
-                sectionContentInput.value = sectionContent;
-                
-                // Show modal
-                editModal.style.display = 'block';
-            });
-        });
-        
-        // Delete buttons
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            // Remove existing event listeners by cloning and replacing
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            
-            newBtn.addEventListener('click', function() {
                 if (confirm('Are you sure you want to delete this section? This action cannot be undone.')) {
-                    const section = this.closest('.doc-section');
-                    const sectionId = section.id;
-                    
-                    // Get current docs
-                    const docs = JSON.parse(localStorage.getItem('bubblesBoxDocs'));
-                    
-                    // Filter out the section to delete
-                    const updatedDocs = docs.filter(doc => doc.id !== sectionId);
-                    
-                    // Save updated docs
-                    localStorage.setItem('bubblesBoxDocs', JSON.stringify(updatedDocs));
-                    
-                    // Update UI
-                    updateNavigation(updatedDocs);
-                    renderDocSections(updatedDocs);
-                    setupNavigation();
+                    const updatedSections = docSections.filter(s => s.id !== sectionId);
+                    saveDocumentation(updatedSections);
+                    window.location.reload();
                 }
             });
         });
     }
     
-    // Add new section
-    function addNewSection() {
-        // Check if user is authenticated
-        if (!isAuthenticated()) {
-            window.location.href = 'admin-login.html';
-            return;
-        }
-        
-        // Generate a unique ID
-        const timestamp = new Date().getTime();
-        const newId = `section-${timestamp}`;
-        
-        // Set current section
-        currentSection = newId;
-        
-        // Fill modal with empty data
-        modalTitle.textContent = 'Add New Section';
-        sectionTitleInput.value = '';
-        sectionContentInput.value = '<p>Enter your content here...</p>';
-        
-        // Show modal
-        editModal.style.display = 'block';
-    }
-    
-    // Save section changes
-    function saveSection(e) {
-        e.preventDefault();
-        
-        // Check if user is authenticated
-        if (!isAuthenticated()) {
-            window.location.href = 'admin-login.html';
-            return;
-        }
-        
-        const title = sectionTitleInput.value.trim();
-        const content = sectionContentInput.value.trim();
-        
-        if (!title || !content) {
-            alert('Please fill in all fields');
-            return;
-        }
-        
-        // Get current docs
-        const docs = JSON.parse(localStorage.getItem('bubblesBoxDocs'));
-        
-        // Check if we're editing an existing section or adding a new one
-        const existingIndex = docs.findIndex(doc => doc.id === currentSection);
-        
-        if (existingIndex !== -1) {
-            // Update existing section
-            docs[existingIndex].title = title;
-            docs[existingIndex].content = content;
-        } else {
-            // Add new section
-            docs.push({
-                id: currentSection,
-                title,
-                content
-            });
-        }
-        
-        // Save updated docs
-        localStorage.setItem('bubblesBoxDocs', JSON.stringify(docs));
-        
-        // Update UI
-        updateNavigation(docs);
-        renderDocSections(docs);
-        setupNavigation();
-        
-        // Close modal
-        editModal.style.display = 'none';
-        
-        // Scroll to the edited/added section
-        const targetElement = document.getElementById(currentSection);
-        if (targetElement) {
-            window.scrollTo({
-                top: targetElement.offsetTop - 100,
-                behavior: 'smooth'
-            });
+    // Section form submission
+    const sectionForm = document.getElementById('section-form');
+    if (sectionForm && isAdmin()) {
+        sectionForm.addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // Highlight the section briefly
-            targetElement.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
-            setTimeout(() => {
-                targetElement.style.backgroundColor = 'transparent';
-                targetElement.style.transition = 'background-color 0.5s ease';
-            }, 100);
-        }
+            const action = this.dataset.action;
+            const sectionId = this.dataset.sectionId;
+            const title = document.getElementById('section-title').value.trim();
+            const content = document.getElementById('section-content').value.trim();
+            
+            if (!title || !content) {
+                alert('Please fill in all fields.');
+                return;
+            }
+            
+            if (action === 'add') {
+                // Generate a unique ID based on the title
+                const newId = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                
+                // Check if ID already exists
+                if (docSections.some(s => s.id === newId)) {
+                    alert('A section with a similar title already exists. Please use a different title.');
+                    return;
+                }
+                
+                // Add new section
+                docSections.push({
+                    id: newId,
+                    title: title,
+                    content: content
+                });
+            } else if (action === 'edit') {
+                // Find and update existing section
+                const sectionIndex = docSections.findIndex(s => s.id === sectionId);
+                if (sectionIndex !== -1) {
+                    docSections[sectionIndex].title = title;
+                    docSections[sectionIndex].content = content;
+                }
+            }
+            
+            // Save updated documentation
+            saveDocumentation(docSections);
+            
+            // Close modal and reload page
+            document.getElementById('doc-modal').style.display = 'none';
+            window.location.reload();
+        });
     }
     
-    // Event Listeners
-    if (toggleEditModeBtn) {
-        // Check if user is authenticated first
-        if (isAuthenticated()) {
-            toggleEditModeBtn.addEventListener('click', toggleEditMode);
-        } else {
-            toggleEditModeBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Admin Login';
-            toggleEditModeBtn.addEventListener('click', function() {
-                window.location.href = 'admin-login.html';
-            });
-        }
-    }
-    
-    if (addSectionBtn) {
-        addSectionBtn.addEventListener('click', addNewSection);
-    }
-    
+    // Close modal button
+    const closeModal = document.querySelector('.close-modal');
     if (closeModal) {
-        closeModal.addEventListener('click', () => {
-            editModal.style.display = 'none';
+        closeModal.addEventListener('click', function() {
+            document.getElementById('doc-modal').style.display = 'none';
         });
-    }
-    
-    if (cancelEdit) {
-        cancelEdit.addEventListener('click', () => {
-            editModal.style.display = 'none';
-        });
-    }
-    
-    if (editForm) {
-        editForm.addEventListener('submit', saveSection);
     }
     
     // Close modal when clicking outside
-    window.addEventListener('click', (e) => {
-        if (e.target === editModal) {
-            editModal.style.display = 'none';
+    window.addEventListener('click', function(e) {
+        const modal = document.getElementById('doc-modal');
+        if (modal && e.target === modal) {
+            modal.style.display = 'none';
         }
     });
     
-    // Initialize documentation
-    initDocumentation();
-    
-    // Set first nav item as active by default
-    const firstNavItem = document.querySelector('#doc-nav a');
-    if (firstNavItem) {
-        firstNavItem.classList.add('active');
-    }
-    
-    // Check for hash in URL and scroll to that section
-    if (window.location.hash) {
-        const targetElement = document.querySelector(window.location.hash);
-        if (targetElement) {
-            setTimeout(() => {
-                window.scrollTo({
-                    top: targetElement.offsetTop - 100,
-                    behavior: 'smooth'
-                });
+    // Highlight active section in sidebar
+    function highlightActiveSection() {
+        const scrollPosition = window.scrollY;
+        
+        document.querySelectorAll('.doc-section').forEach(section => {
+            const sectionTop = section.offsetTop - 100;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                const sectionId = section.id;
                 
-                // Set the corresponding nav item as active
-                const navItem = document.querySelector(`#doc-nav a[href="${window.location.hash}"]`);
-                if (navItem) {
-                    document.querySelectorAll('#doc-nav a').forEach(a => a.classList.remove('active'));
-                    navItem.classList.add('active');
-                }
-            }, 300);
-        }
+                document.querySelectorAll('.doc-nav a').forEach(link => {
+                    link.classList.remove('active');
+                    
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
     }
+    
+    // Run on scroll
+    window.addEventListener('scroll', highlightActiveSection);
+    
+    // Run once on page load
+    highlightActiveSection();
 });
