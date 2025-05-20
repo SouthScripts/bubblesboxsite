@@ -1198,3 +1198,54 @@ input[type="file"] {
 .fas.fa-box:before {
     content: "\f466"; /* Using the box icon */
 }
+#github-settings {
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    margin-top: 1rem;
+}
+
+#github-settings .form-group {
+    margin-bottom: 1rem;
+}
+
+#github-settings label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+#github-settings input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* Deployment Messages */
+.deploy-message {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    text-align: center;
+    font-weight: 500;
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+}
+
+.deploy-message.success {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--success);
+}
+
+.deploy-message.error {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+}
+
+.deploy-message i {
+    margin-right: 0.5rem;
+}

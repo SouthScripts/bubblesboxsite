@@ -316,6 +316,30 @@ document.addEventListener('DOMContentLoaded', function() {
         const isAdminUser = isAdmin();
         
         if (isAdminUser) {
+            // Update admin controls to include deploy to Vercel option
+            adminControls.innerHTML = `
+                <button id="add-section-btn" class="btn btn-primary btn-block">
+                    <i class="fas fa-plus"></i> Add Section
+                </button>
+                <button id="deploy-to-vercel-btn" class="btn btn-secondary btn-block">
+                    <i class="fas fa-rocket"></i> Deploy to Vercel
+                </button>
+                <div id="github-settings" style="display: none; margin-top: 1rem;">
+                    <div class="form-group">
+                        <label for="github-token">GitHub Token</label>
+                        <input type="password" id="github-token" placeholder="Personal Access Token" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="github-repo">Repository</label>
+                        <input type="text" id="github-repo" placeholder="username/repo" class="form-control">
+                    </div>
+                    <button id="save-github-settings" class="btn btn-primary btn-block">Save Settings</button>
+                </div>
+                <a href="admin-login.html" class="btn btn-outline btn-block" style="margin-top: 1rem;">
+                    <i class="fas fa-user-shield"></i> Admin Login
+                </a>
+            `;
+            
             adminControls.style.display = 'block';
             
             // Add admin bar if not already present
@@ -346,6 +370,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.reload();
                 });
             }
+            
+            // Load GitHub settings if they exist
+            const githubToken = localStorage.getItem('github_token');
+            const githubRepo = localStorage.getItem('github_repo');
+            
+            if (githubToken && githubRepo) {
+                document.getElementById('github-token').value = githubToken;
+                document.getElementById('github-repo').value = githubRepo;
+            }
+            
+            // Add deploy to Vercel functionality
+            document.getElementById('deploy-to-vercel-btn').addEventListener('click', function() {
+                const githubToken = localStorage.getItem('github_token');
+                const githubRepo = localStorage.getItem('github_repo');
+                
+                if (!githubToken || !githubRepo) {
+                    // Show GitHub settings form
+                    document.getElementById('github-settings').style.display = 'block';
+                    alert('Please enter your GitHub token and repository information to deploy to Vercel.');
+                } else {
+                    // Deploy to Vercel
+                    deployToVercel(githubToken, githubRepo);
+                }
+            });
+            
+            // Save GitHub settings
+            document.getElementById('save-github-settings').addEventListener('click', function() {
+                const token = document.getElementById('github-token').value.trim();
+                const repo = document.getElementById('github-repo').value.trim();
+                
+                if (!token || !repo) {
+                    alert('Please enter both GitHub token and repository.');
+                    return;
+                }
+                
+                localStorage.setItem('github_token', token);
+                localStorage.setItem('github_repo', repo);
+                
+                document.getElementById('github-settings').style.display = 'none';
+                alert('GitHub settings saved! You can now deploy to Vercel.');
+            });
         } else {
             adminControls.style.display = 'none';
             
@@ -355,6 +420,258 @@ document.addEventListener('DOMContentLoaded', function() {
                 adminBar.remove();
             }
         }
+    }
+    
+    // Function to deploy to Vercel by updating GitHub repository
+    async function deployToVercel(token, repo) {
+        try {
+            // Show loading message
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'deploy-message';
+            loadingMessage.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deploying to Vercel...';
+            document.querySelector('.admin-controls').appendChild(loadingMessage);
+            
+            // Generate HTML content
+            const htmlContent = generateHTMLContent();
+            
+            // Get the current file from GitHub to get its SHA
+            const [owner, repoName] = repo.split('/');
+            const filePath = 'documentation.html';
+            
+            // First, try to get the file to see if it exists and get its SHA
+            let fileSha = '';
+            try {
+                const fileResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+                
+                if (fileResponse.ok) {
+                    const fileData = await fileResponse.json();
+                    fileSha = fileData.sha;
+                }
+            } catch (error) {
+                console.error('Error getting file from GitHub:', error);
+                // If the file doesn't exist, we'll create it (no SHA needed)
+            }
+            
+            // Prepare the request to update or create the file
+            const updateResponse = await fetch(`https://api.github.com/repos/${repo}/contents/${filePath}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    message: 'Update documentation.html via admin panel',
+                    content: btoa(unescape(encodeURIComponent(htmlContent))), // Base64 encode the content
+                    sha: fileSha || undefined // Include SHA if updating, omit if creating
+                })
+            });
+            
+            if (updateResponse.ok) {
+                // Remove loading message
+                loadingMessage.remove();
+                
+                // Show success message
+                const successMessage = document.createElement('div');
+                successMessage.className = 'deploy-message success';
+                successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Documentation deployed successfully! Vercel will automatically update your site.';
+                document.querySelector('.admin-controls').appendChild(successMessage);
+                
+                // Remove success message after 5 seconds
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 5000);
+            } else {
+                throw new Error(`GitHub API returned ${updateResponse.status}: ${await updateResponse.text()}`);
+            }
+        } catch (error) {
+            console.error('Error deploying to Vercel:', error);
+            
+            // Remove loading message if it exists
+            const loadingMessage = document.querySelector('.deploy-message');
+            if (loadingMessage) {
+                loadingMessage.remove();
+            }
+            
+            // Show error message
+            const errorMessage = document.createElement('div');
+            errorMessage.className = 'deploy-message error';
+            errorMessage.innerHTML = `<i class="fas fa-exclamation-circle"></i> Error deploying to Vercel: ${error.message}`;
+            document.querySelector('.admin-controls').appendChild(errorMessage);
+            
+            // Remove error message after 5 seconds
+            setTimeout(() => {
+                errorMessage.remove();
+            }, 5000);
+        }
+    }
+    
+    // Function to generate HTML content
+    function generateHTMLContent() {
+        let htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Bubbles Box Minecraft Server</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <a href="index.html" class="logo">Bubbles Box</a>
+                <ul class="nav-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="index.html#features" class="nav-link">Features</a></li>
+                    <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
+                    <li><a href="index.html#join" class="nav-link">Join Us</a></li>
+                    <li><a href="documentation.html" class="nav-link active">Documentation</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button id="theme-toggle" class="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                    <div class="hamburger">
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                        <span class="bar"></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <section class="documentation-hero">
+        <div class="container">
+            <h1>Server Documentation</h1>
+            <p>Everything you need to know about Bubbles Box Minecraft Server</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div class="doc-layout">
+                <div class="doc-sidebar">
+                    <div class="sidebar-header">
+                        <h3>Contents</h3>
+                    </div>
+                    <ul class="doc-nav">
+`;
+
+        // Add navigation links
+        docSections.forEach(section => {
+            htmlContent += `                        <li><a href="#${section.id}" data-section="${section.id}">${section.title}</a></li>\n`;
+        });
+
+        htmlContent += `                    </ul>
+                    <div class="admin-controls" style="display: none;">
+                        <button id="add-section-btn" class="btn btn-primary btn-block">
+                            <i class="fas fa-plus"></i> Add Section
+                        </button>
+                        <button id="deploy-to-vercel-btn" class="btn btn-secondary btn-block">
+                            <i class="fas fa-rocket"></i> Deploy to Vercel
+                        </button>
+                        <a href="admin-login.html" class="btn btn-outline btn-block" style="margin-top: 1rem;">
+                            <i class="fas fa-user-shield"></i> Admin Login
+                        </a>
+                    </div>
+                </div>
+                <div class="doc-main">
+`;
+
+        // Add documentation sections
+        docSections.forEach(section => {
+            htmlContent += `                    <div id="${section.id}" class="doc-section">
+                        <div class="section-header">
+                            <h2>${section.title}</h2>
+                        </div>
+                        <div class="section-content">${section.content}</div>
+                    </div>\n`;
+        });
+
+        htmlContent += `                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal for adding/editing sections -->
+    <div id="doc-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Add New Section</h2>
+            <form id="section-form" data-action="add" data-section-id="">
+                <div class="form-group">
+                    <label for="section-title">Section Title</label>
+                    <input type="text" id="section-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="section-content">Content (HTML)</label>
+                    <textarea id="section-content" rows="15" required></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-outline close-modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Bubbles Box</h2>
+                    <p>The ultimate Minecraft Box PvP experience.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#features">Features</a></li>
+                        <li><a href="index.html#gallery">Gallery</a></li>
+                        <li><a href="index.html#join">Join Us</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> support@bubblesbox.net</p>
+                    <p><i class="fab fa-discord"></i> Join our Discord</p>
+                    <p>
+                        <i class="fas fa-server"></i> 
+                        <span id="server-address-footer">play.bubblesbox.net</span>
+                        <button id="copy-ip-footer" class="btn btn-outline btn-sm">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 Bubbles Box. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script src="documentation.js"></script>
+</body>
+</html>`;
+
+        return htmlContent;
     }
     
     // Add section button (admin only)
@@ -374,101 +691,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             modal.style.display = 'block';
         });
-    }
-    
-    // Export documentation button (admin only)
-    const exportDocsBtn = document.getElementById('export-docs-btn');
-    if (exportDocsBtn && isAdmin()) {
-        exportDocsBtn.addEventListener('click', function() {
-            exportDocumentation();
-        });
-    }
-    
-    // Import documentation button (admin only)
-    const importDocsBtn = document.getElementById('import-docs-btn');
-    if (importDocsBtn && isAdmin()) {
-        importDocsBtn.addEventListener('click', function() {
-            // Create a file input element
-            const fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = '.json';
-            fileInput.style.display = 'none';
-            document.body.appendChild(fileInput);
-            
-            // Trigger the file selection dialog
-            fileInput.click();
-            
-            // Handle file selection
-            fileInput.addEventListener('change', function() {
-                if (fileInput.files.length > 0) {
-                    const file = fileInput.files[0];
-                    const reader = new FileReader();
-                    
-                    reader.onload = function(e) {
-                        try {
-                            const importedData = JSON.parse(e.target.result);
-                            
-                            // Validate the imported data
-                            if (importedData.sections && Array.isArray(importedData.sections) && importedData.lastUpdated) {
-                                // Compare timestamps
-                                const currentData = loadDocumentation();
-                                const currentDate = new Date(currentData.lastUpdated);
-                                const importedDate = new Date(importedData.lastUpdated);
-                                
-                                if (importedDate > currentDate) {
-                                    // The imported data is newer
-                                    if (confirm(`The imported documentation is newer (${importedDate.toLocaleString()}) than your current documentation (${currentDate.toLocaleString()}). Do you want to replace your current documentation?`)) {
-                                        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(importedData));
-                                        alert('Documentation imported successfully! The page will now reload.');
-                                        window.location.reload();
-                                    }
-                                } else {
-                                    // The current data is newer or the same age
-                                    if (confirm(`Your current documentation (${currentDate.toLocaleString()}) is newer than the imported documentation (${importedDate.toLocaleString()}). Do you still want to replace your current documentation?`)) {
-                                        localStorage.setItem(GLOBAL_DOC_KEY, JSON.stringify(importedData));
-                                        alert('Documentation imported successfully! The page will now reload.');
-                                        window.location.reload();
-                                    }
-                                }
-                            } else {
-                                alert('The imported file does not contain valid documentation data.');
-                            }
-                        } catch (error) {
-                            console.error('Error importing documentation:', error);
-                            alert('Error importing documentation. Please make sure the file is a valid JSON export.');
-                        }
-                    };
-                    
-                    reader.readAsText(file);
-                }
-                
-                // Clean up
-                document.body.removeChild(fileInput);
-            });
-        });
-    }
-    
-    // Function to export documentation
-    function exportDocumentation() {
-        const docData = loadDocumentation();
-        
-        // Create a Blob with the documentation data
-        const blob = new Blob([JSON.stringify(docData, null, 2)], { type: 'application/json' });
-        
-        // Create a download link
-        const downloadLink = document.createElement('a');
-        downloadLink.href = URL.createObjectURL(blob);
-        downloadLink.download = `bubbles_box_documentation_${new Date().toISOString().split('T')[0]}.json`;
-        
-        // Trigger the download
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        
-        // Clean up
-        document.body.removeChild(downloadLink);
-        URL.revokeObjectURL(downloadLink.href);
-        
-        alert('Documentation exported successfully! You can import this file on another device to sync your documentation.');
     }
     
     // Edit section buttons (admin only)
