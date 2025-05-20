@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bubbles Box - Minecraft PvP Server</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Bubbles Box</a>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#gallery" class="nav-link">Gallery</a></li>
+                <li><a href="#join" class="nav-link">Join Us</a></li>
+                <li><a href="documentation.html" class="nav-link">Documentation</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Welcome to <span class="highlight">Bubbles Box</span></h1>
+                <p class="hero-subtitle">The Ultimate Minecraft Box PvP Experience</p>
+                <div class="server-ip">
+                    <span id="server-address">play.bubblesbox.org</span>
+                    <button id="copy-ip" class="btn btn-secondary">
+                        <i class="fas fa-copy"></i> Copy IP
+                    </button>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#join" class="btn btn-primary">Join Now</a>
+                    <a href="documentation.html" class="btn btn-outline">View Documentation</a>
+                </div>
+            </div>
+        </div>
+        <div class="server-status">
+    <div class="container">
+        <div class="status-indicator">
+            <span class="status-dot online"></span>
+            <span id="online-players">0</span> players online
+        </div>
+    </div>
+</div>
+    </section>
+
+    <section id="about" class="about section">
+        <div class="container">
+            <div class="section-header">
+                <h2>About Our Server</h2>
+                <p>Experience the best Box PvP gameplay on Minecraft</p>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Bubbles Box is a premium Minecraft PvP server focused on the exciting Box PvP gameplay. Our server offers a unique combat experience with custom armor/tools, special abilities, and regular events.</p>
+                    <p>Founded in 2025, we've built a friendly community of PvP enthusiasts who enjoy fair and competitive gameplay. Whether you're a seasoned PvP veteran or just starting out, Bubbles Box has something for everyone!</p>
+                    <a href="documentation.html" class="btn btn-outline">Learn More</a>
+                </div>
+                <div class="about-image">
+                    <img src="map.png" alt="Server gameplay">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="features section bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2>Server Features</h2>
+                <p>What makes Bubbles Box special</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-swords"></i>
+                    </div>
+                    <h3>Box PvP</h3>
+                    <p>Custom arenas designed specifically for intense Box PvP combat with balanced gameplay.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <h3>Custom Armor/Tools</h3>
+                    <p>Mine at the mines to upgrade your Armor & Tools to get a start at the fun!</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Chat Games</h3>
+                    <p>Participate in and chat games to get awesome prizes and rewards.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <h3>Leaderboards</h3>
+                    <p>Climb the competitive ladder of the leaderboards and brag about being first!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Gallery</h2>
+                <p>See our server in action</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="map.png" alt="PvP Arena 1">
+                </div>
+                <div class="gallery-item">
+                    <img src="healingwand.png" alt="PvP Arena 2">
+                </div>
+                <div class="gallery-item">
+                    <img src="chatcolors.png" alt="Tournament Event">
+                </div>
+                <div class="gallery-item">
+                    <img src="afkshop.png" alt="Custom Kit Selection">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="join" class="join section bg-light">
+        <div class="container">
+            <div class="section-header">
+                <h2>How to Join</h2>
+                <p>Connect to our server in a few simple steps</p>
+            </div>
+            <div class="join-steps">
+                <div class="step-card">
+                    <div class="step-number">1</div>
+                    <h3>Launch Minecraft</h3>
+                    <p>Open your Minecraft Java Edition client (version 1.19.2 or later)</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">2</div>
+                    <h3>Add Server</h3>
+                    <p>Click "Multiplayer" then "Add Server"</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">3</div>
+                    <h3>Enter Server Address</h3>
+                    <p>Type <span class="server-ip-highlight">play.bubblesbox.org</span> in the server address field</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-number">4</div>
+                    <h3>Join & Play</h3>
+                    <p>Click "Done" and then double-click on the server to join!</p>
+                </div>
+            </div>
+            <div class="discord-join">
+                <h3>Join our Community</h3>
+                <p>Connect with other players and stay updated on server news</p>
+                <a href="https://discord.gg/zm4XNCVt9H" class="btn btn-discord">
+                    <i class="fab fa-discord"></i> Join Discord
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta section">
+        <div class="container">
+            <h2>Ready to join the action?</h2>
+            <p>Connect to our server today and experience the best Box PvP gameplay!</p>
+            <div class="cta-buttons">
+                <button id="copy-ip-footer" class="btn btn-primary">
+                    <i class="fas fa-copy"></i> Copy Server IP
+                </button>
+                <a href="documentation.html" class="btn btn-secondary">View Documentation</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Bubbles Box</h2>
+                    <p>The Ultimate Minecraft Box PvP Experience</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                        <li><a href="#join">Join Us</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> Tickets Channel In Discord</p>
+                    <p><i class="fab fa-discord"></i> discord.bubblesbox.org</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025-2025 Bubbles Box. Not affiliated with Mojang AB.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

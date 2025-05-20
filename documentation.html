@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Bubbles Box</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">Bubbles Box</a>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="index.html#features" class="nav-link">Features</a></li>
+                <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
+                <li><a href="index.html#join" class="nav-link">Join Us</a></li>
+                <li><a href="documentation.html" class="nav-link active">Documentation</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-toggle">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+
+    <section class="documentation-hero">
+        <div class="container">
+            <h1>Server Documentation</h1>
+            <p>Everything you need to know about Bubbles Box</p>
+        </div>
+    </section>
+
+    <section class="documentation-content section">
+        <div class="container">
+            <div class="doc-layout">
+                <aside class="doc-sidebar">
+                    <div class="sidebar-header">
+                        <h3>Contents</h3>
+                    </div>
+                    <ul class="doc-nav" id="doc-nav">
+                        <li><a href="#getting-started" class="active">Getting Started</a></li>
+                        <li><a href="#server-rules">Server Rules</a></li>
+                        <li><a href="#game-modes">Game Modes</a></li>
+                        <li><a href="#commands">Commands</a></li>
+                        <li><a href="#ranks">Ranks & Permissions</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                    <div class="admin-controls" id="admin-controls" style="display: none;">
+                        <button id="toggle-edit-mode" class="btn btn-primary">
+                            <i class="fas fa-edit"></i> Edit Mode
+                        </button>
+                        <button id="add-section" class="btn btn-secondary" style="display: none;">
+                            <i class="fas fa-plus"></i> Add Section
+                        </button>
+                    </div>
+                </aside>
+
+                <main class="doc-main">
+                    <div id="doc-content">
+                        <!-- Content will be loaded here -->
+                        <div class="doc-section" id="getting-started">
+                            <div class="section-header">
+                                <h2>Getting Started</h2>
+                                <div class="edit-controls" style="display: none;">
+                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <p>Welcome to Bubbles Box, the ultimate Minecraft Box PvP server! This guide will help you get started with our server and make the most of your experience.</p>
+                                
+                                <h3>Connecting to the Server</h3>
+                                <p>To join our server, follow these steps:</p>
+                                <ol>
+                                    <li>Launch Minecraft Java Edition (version 1.19.2 or later)</li>
+                                    <li>Click on "Multiplayer" from the main menu</li>
+                                    <li>Click "Add Server"</li>
+                                    <li>Enter "Bubbles Box" as the server name</li>
+                                    <li>Enter "play.bubblesbox.net" as the server address</li>
+                                    <li>Click "Done" and then double-click on the server to join</li>
+                                </ol>
+                                
+                                <h3>Your First Login</h3>
+                                <p>When you first join the server, you'll spawn in our lobby area. Here you can:</p>
+                                <ul>
+                                    <li>Read the server rules</li>
+                                    <li>Choose a game mode</li>
+                                    <li>Select your kit</li>
+                                    <li>Join a match</li>
+                                </ul>
+                                
+                                <p>Use the command <code>/help</code> to see a list of available commands.</p>
+                            </div>
+                        </div>
+
+                        <div class="doc-section" id="server-rules">
+                            <div class="section-header">
+                                <h2>Server Rules</h2>
+                                <div class="edit-controls" style="display: none;">
+                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <p>To ensure a fair and enjoyable experience for all players, please follow these rules:</p>
+                                
+                                <h3>General Rules</h3>
+                                <ol>
+                                    <li>Be respectful to all players and staff</li>
+                                    <li>No harassment, discrimination, or hate speech</li>
+                                    <li>No spamming or excessive caps in chat</li>
+                                    <li>No advertising other servers or services</li>
+                                    <li>English only in main chat</li>
+                                </ol>
+                                
+                                <h3>Gameplay Rules</h3>
+                                <ol>
+                                    <li>No hacking, cheating, or using unfair advantages</li>
+                                    <li>No exploiting bugs or glitches</li>
+                                    <li>No teaming in solo game modes</li>
+                                    <li>No combat logging (disconnecting during fights)</li>
+                                    <li>No using macros or auto-clickers</li>
+                                </ol>
+                                
+                                <p>Breaking these rules may result in warnings, temporary bans, or permanent bans depending on the severity and frequency of the offense.</p>
+                            </div>
+                        </div>
+
+                        <div class="doc-section" id="game-modes">
+                            <div class="section-header">
+                                <h2>Game Modes</h2>
+                                <div class="edit-controls" style="display: none;">
+                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <p>Bubbles Box offers several game modes to suit different playstyles:</p>
+                                
+                                <h3>Classic Box PvP</h3>
+                                <p>The traditional Box PvP experience with standard kits and maps. Fight in a confined space and be the last player standing.</p>
+                                <p><strong>Command:</strong> <code>/play classic</code></p>
+                                
+                                <h3>Team Battles</h3>
+                                <p>Form teams and compete in 2v2, 3v3, and 4v4 Box PvP matches. Coordinate with your teammates to defeat the opposing team.</p>
+                                <p><strong>Command:</strong> <code>/play teams</code></p>
+                                
+                                <h3>Ranked Mode</h3>
+                                <p>Compete in ranked matches to climb the leaderboard. Win matches to gain ELO points and unlock exclusive rewards.</p>
+                                <p><strong>Command:</strong> <code>/play ranked</code></p>
+                                
+                                <h3>Practice Mode</h3>
+                                <p>Hone your skills in a non-competitive environment. Practice your combos, movement, and strategies without affecting your stats.</p>
+                                <p><strong>Command:</strong> <code>/play practice</code></p>
+                            </div>
+                        </div>
+
+                        <div class="doc-section" id="commands">
+                            <div class="section-header">
+                                <h2>Commands</h2>
+                                <div class="edit-controls" style="display: none;">
+                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <p>Here are some useful commands you can use on our server:</p>
+                                
+                                <h3>General Commands</h3>
+                                <ul>
+                                    <li><code>/help</code> - Shows a list of available commands</li>
+                                    <li><code>/rules</code> - Displays the server rules</li>
+                                    <li><code>/spawn</code> - Teleports you to the spawn area</li>
+                                    <li><code>/lobby</code> - Returns you to the main lobby</li>
+                                </ul>
+                                
+                                <h3>Game Commands</h3>
+                                <ul>
+                                    <li><code>/play [mode]</code> - Joins a specific game mode</li>
+                                    <li><code>/kit [name]</code> - Selects a specific kit</li>
+                                    <li><code>/stats</code> - Shows your player statistics</li>
+                                    <li><code>/leaderboard</code> - Displays the server leaderboard</li>
+                                </ul>
+                                
+                                <h3>Social Commands</h3>
+                                <ul>
+                                    <li><code>/msg [player] [message]</code> - Sends a private message to a player</li>
+                                    <li><code>/r [message]</code> - Replies to the last private message</li>
+                                    <li><code>/friend add [player]</code> - Sends a friend request</li>
+                                    <li><code>/party invite [player]</code> - Invites a player to your party</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="doc-section" id="ranks">
+                            <div class="section-header">
+                                <h2>Ranks & Permissions</h2>
+                                <div class="edit-controls" style="display: none;">
+                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <p>Our server has different ranks that provide various perks and permissions:</p>
+                                
+                                <h3>Player Ranks</h3>
+                                <div class="rank-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>How to Obtain</th>
+                                                <th>Perks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Novice</td>
+                                                <td>Default rank for new players</td>
+                                                <td>Basic access to all game modes</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Warrior</td>
+                                                <td>Win 50 matches</td>
+                                                <td>Access to exclusive kits, colored chat</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Champion</td>
+                                                <td>Win 200 matches</td>
+                                                <td>Custom kit creation, chat prefix</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Legend</td>
+                                                <td>Win 500 matches</td>
+                                                <td>Special effects, exclusive cosmetics</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <h3>Donator Ranks</h3>
+                                <div class="rank-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Rank</th>
+                                                <th>Cost</th>
+                                                <th>Perks</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>VIP</td>
+                                                <td>$5/month</td>
+                                                <td>Priority queue, custom chat color</td>
+                                            </tr>
+                                            <tr>
+                                                <td>MVP</td>
+                                                <td>$10/month</td>
+                                                <td>VIP perks + exclusive kits, particle effects</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Elite</td>
+                                                <td>$20/month</td>
+                                                <td>MVP perks + private matches, custom titles</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                                <p>Visit our store at <a href="#">store.bubblesbox.net</a> to purchase donator ranks.</p>
+                            </div>
+                        </div>
+
+                        <div class="doc-section" id="faq">
+                            <div class="section-header">
+                                <h2>FAQ</h2>
+                                <div class="edit-controls" style="display: none;">
+                                    <button class="edit-btn"><i class="fas fa-edit"></i></button>
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                            <div class="section-content">
+                                <h3>Frequently Asked Questions</h3>
+                                
+                                <div class="faq-item">
+                                    <h4>What versions of Minecraft are supported?</h4>
+                                    <p>Our server supports Minecraft Java Edition versions 1.19.2 to 1.20.4.</p>
+                                </div>
+                                
+                                <div class="faq-item">
+                                    <h4>Can I play on Bedrock Edition?</h4>
+                                    <p>Currently, our server only supports Java Edition. We may add Bedrock support in the future.</p>
+                                </div>
+                                
+                                <div class="faq-item">
+                                    <h4>How do I report a player?</h4>
+                                    <p>Use the command <code>/report [player] [reason]</code> in-game or join our Discord server and open a ticket.</p>
+                                </div>
+                                
+                                <div class="faq-item">
+                                    <h4>How do I apply for staff?</h4>
+                                    <p>Staff applications are opened periodically. Check our Discord announcements for information about when applications are open.</p>
+                                </div>
+                                
+                                <div class="faq-item">
+                                    <h4>Is there a resource pack?</h4>
+                                    <p>Yes, we have an optional resource pack that enhances the visual experience. You'll be prompted to download it when joining the server.</p>
+                                </div>
+                                
+                                <div class="faq-item">
+                                    <h4>How do I create a team?</h4>
+                                    <p>Use the command <code>/team create [name]</code> to create a team, then invite players with <code>/team invite [player]</code>.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </section>
+
+    <!-- Edit Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Edit Section</h2>
+            <form id="edit-form">
+                <div class="form-group">
+                    <label for="section-title">Section Title</label>
+                    <input type="text" id="section-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="section-content">Content (HTML supported)</label>
+                    <textarea id="section-content" rows="15" required></textarea>
+                </div>
+                <div class="form-buttons">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-edit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Bubbles Box</h2>
+                    <p>The Ultimate Minecraft Box PvP Experience</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#features">Features</a></li>
+                        <li><a href="index.html#gallery">Gallery</a></li>
+                        <li><a href="index.html#join">Join Us</a></li>
+                        <li><a href="documentation.html">Documentation</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i> admin@bubblesbox.net</p>
+                    <p><i class="fab fa-discord"></i> discord.gg/bubblesbox</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023-2025 Bubbles Box. Not affiliated with Mojang AB.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="admin.js"></script>
+    <script src="documentation.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
