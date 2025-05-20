@@ -1,7 +1,11 @@
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Documentation script loaded');
+    
     // Check if we're on the documentation page
     const docMain = document.querySelector('.doc-main');
     if (!docMain) return;
+    
+    console.log('Documentation page detected');
     
     // Default documentation sections
     const defaultDocSections = [
@@ -202,7 +206,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Check if user is admin
     function isAdmin() {
-        return localStorage.getItem('adminLoggedIn') === 'true';
+        const adminStatus = localStorage.getItem('adminLoggedIn');
+        console.log('Admin status:', adminStatus);
+        return adminStatus === 'true';
     }
     
     // Global documentation storage key
@@ -221,11 +227,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize documentation if it doesn't exist
     if (!localStorage.getItem(GLOBAL_DOC_KEY)) {
+        console.log('Initializing default documentation');
         saveDocumentation(defaultDocSections);
     }
     
     // Load documentation sections
     const docSections = loadDocumentation();
+    console.log('Loaded documentation sections:', docSections.length);
     
     // Generate sidebar navigation
     const docNav = document.querySelector('.doc-nav');
@@ -247,7 +255,10 @@ document.addEventListener('DOMContentLoaded', function() {
             sectionElement.className = 'doc-section';
             
             // Only show edit controls for admin
-            const editControls = isAdmin() ? `
+            const isAdminUser = isAdmin();
+            console.log('Is admin for section controls:', isAdminUser);
+            
+            const editControls = isAdminUser ? `
                 <div class="edit-controls">
                     <button class="edit-btn" data-section="${section.id}"><i class="fas fa-edit"></i></button>
                     <button class="delete-btn" data-section="${section.id}"><i class="fas fa-trash"></i></button>
@@ -269,7 +280,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Show/hide admin controls based on login status
     const adminControls = document.querySelector('.admin-controls');
     if (adminControls) {
-        if (isAdmin()) {
+        const isAdminUser = isAdmin();
+        console.log('Is admin for admin controls:', isAdminUser);
+        
+        if (isAdminUser) {
             adminControls.style.display = 'block';
             
             // Add admin bar if not already present
@@ -328,9 +342,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Edit section buttons (admin only)
-    const editBtns = document.querySelectorAll('.edit-btn');
-    if (editBtns.length > 0 && isAdmin()) {
-        editBtns.forEach(btn => {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        if (isAdmin()) {
             btn.addEventListener('click', function() {
                 const sectionId = this.dataset.section;
                 const section = docSections.find(s => s.id === sectionId);
@@ -350,13 +363,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     modal.style.display = 'block';
                 }
             });
-        });
-    }
+        }
+    });
     
     // Delete section buttons (admin only)
-    const deleteBtns = document.querySelectorAll('.delete-btn');
-    if (deleteBtns.length > 0 && isAdmin()) {
-        deleteBtns.forEach(btn => {
+    document.querySelectorAll('.delete-btn').forEach(btn => {
+        if (isAdmin()) {
             btn.addEventListener('click', function() {
                 const sectionId = this.dataset.section;
                 
@@ -366,8 +378,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     window.location.reload();
                 }
             });
-        });
-    }
+        }
+    });
     
     // Section form submission
     const sectionForm = document.getElementById('section-form');
