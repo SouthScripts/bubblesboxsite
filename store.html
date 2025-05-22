@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Bubbles Box Minecraft Server</title>
+    <title>Store - Bubbles Box Minecraft Server</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
@@ -18,7 +18,7 @@
                 <li><a href="index.html#features" class="nav-link">Features</a></li>
                 <li><a href="index.html#gallery" class="nav-link">Gallery</a></li>
                 <li><a href="index.html#join" class="nav-link">Join Us</a></li>
-                <li><a href="store.html" class="nav-link">Store</a></li>
+                <li><a href="store.html" class="nav-link active">Store</a></li>
             </ul>
             <div class="nav-actions">
                 <button id="theme-toggle" class="theme-toggle">
@@ -34,40 +34,55 @@
     </nav>
 </header>
 
-<section class="admin-login-section">
+<!-- Admin Bar will be inserted here by JavaScript if user is admin -->
+
+<section class="store-hero">
     <div class="container">
-        <div class="admin-login-container">
-            <div class="admin-login-card">
-                <div class="admin-login-header">
-                    <h2>Admin Login</h2>
-                    <p>Enter your credentials to access the admin panel</p>
+        <h1>Server Store</h1>
+        <p>Support Bubbles Box and get awesome perks!</p>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="store-layout">
+            <div class="store-sidebar">
+                <div class="sidebar-header">
+                    <h3>Categories</h3>
                 </div>
+                <ul class="store-nav" id="store-categories">
+                    <!-- Categories will be loaded from Tebex -->
+                    <li class="loading-item"><i class="fas fa-spinner fa-spin"></i> Loading categories...</li>
+                </ul>
                 
-                <form id="admin-login-form">
-                    <div class="form-group">
-                        <label for="admin-username">Username</label>
-                        <input type="text" id="admin-username" required>
+                <div class="admin-controls" style="display: none;">
+                    <a href="admin-login.html" class="btn btn-outline btn-block" style="margin-top: 1rem;">
+                        <i class="fas fa-user-shield"></i> Admin Login
+                    </a>
+                </div>
+            </div>
+            <div class="store-main">
+                <div id="tebex-store">
+                    <!-- Store content will be loaded here -->
+                    <div class="loading-container">
+                        <i class="fas fa-spinner fa-spin fa-3x"></i>
+                        <p>Loading store items...</p>
                     </div>
-                    <div class="form-group">
-                        <label for="admin-password">Password</label>
-                        <input type="password" id="admin-password" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="remember-me">
-                            <span class="checkbox-text">Remember me</span>
-                        </label>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
-                </form>
-                
-                <div class="admin-login-footer">
-                    <p>Return to <a href="index.html">Home</a> or <a href="store.html">Store</a></p>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Modal for package details -->
+<div id="package-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <div id="package-details">
+            <!-- Package details will be loaded here -->
+        </div>
+    </div>
+</div>
 
 <footer class="footer">
     <div class="container">
@@ -111,7 +126,10 @@
     </div>
 </footer>
 
+<!-- Tebex JS -->
+<script src="https://plugin.tebex.io/api/tebex.js"></script>
 <script src="script.js"></script>
+<script src="store.js"></script>
 <script src="admin.js"></script>
 </body>
 </html>

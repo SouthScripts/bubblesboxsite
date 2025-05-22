@@ -1285,3 +1285,340 @@ input[type="file"] {
 .form-text a {
     text-decoration: underline;
 }
+/* Store Styles */
+
+/* Store Hero Section */
+.store-hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/placeholder.svg?height=500&width=1920');
+    background-size: cover;
+    background-position: center;
+    color: var(--text-on-primary);
+    padding: 6rem 0;
+    text-align: center;
+}
+
+.store-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.store-hero p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    opacity: 0.9;
+}
+
+/* Store Layout */
+.store-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .store-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Store Sidebar */
+.store-sidebar {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    height: fit-content;
+}
+
+.sidebar-header {
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.store-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.store-nav li {
+    margin-bottom: 0.5rem;
+}
+
+.store-nav .loading-item {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.store-nav .category-link {
+    display: block;
+    padding: 0.75rem 1rem;
+    color: var(--text-primary);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    transition: all 0.2s ease;
+}
+
+.store-nav .category-link:hover {
+    background-color: var(--bg-hover);
+}
+
+.store-nav .category-link.active {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+}
+
+/* Store Main Content */
+.store-main {
+    min-height: 500px;
+}
+
+/* Loading Container */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--text-secondary);
+}
+
+.loading-container i {
+    margin-bottom: 1rem;
+    color: var(--primary);
+}
+
+/* Store Not Configured */
+.store-not-configured,
+.store-error {
+    text-align: center;
+    padding: 3rem;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+}
+
+.store-not-configured i,
+.store-error i {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.store-error i {
+    color: var(--danger);
+}
+
+.store-not-configured h2,
+.store-error h2 {
+    margin-bottom: 1rem;
+}
+
+.store-not-configured p,
+.store-error p {
+    margin-bottom: 1rem;
+    color: var(--text-secondary);
+}
+
+/* Packages Grid */
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Package Card */
+.package-card {
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.package-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.package-image {
+    height: 150px;
+    overflow: hidden;
+    background-color: var(--bg-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.package-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--bg-hover);
+    color: var(--text-secondary);
+}
+
+.placeholder-image.large {
+    height: 200px;
+}
+
+.package-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.package-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.package-price {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+/* Package Details Modal */
+.package-detail-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+    .package-detail-header {
+        flex-direction: row;
+        gap: 1.5rem;
+    }
+}
+
+.package-detail-image {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: var(--border-radius);
+}
+
+.package-detail-info {
+    flex-grow: 1;
+}
+
+.package-detail-info h2 {
+    margin-bottom: 0.5rem;
+    font-size: 1.8rem;
+}
+
+.package-detail-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.package-detail-description {
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.package-detail-actions {
+    margin-top: 1rem;
+}
+
+/* No Packages */
+.no-packages {
+    padding: 3rem;
+    text-align: center;
+    background-color: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    color: var(--text-secondary);
+}
+
+/* Admin Bar */
+.admin-bar {
+    background-color: var(--primary);
+    color: var(--text-on-primary);
+    padding: 0.5rem 0;
+}
+
+.admin-bar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.admin-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Form Styles for Store Config */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.form-text {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+/* Button Styles */
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.1rem;
+}
+
+.btn-danger {
+    background-color: var(--danger);
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #e53e3e;
+}
